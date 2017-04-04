@@ -3,5 +3,13 @@
   "node": true,
   "strict": "global",
   "-W032": false,
-  "-W014": false
+  "-W014": false,
+  "globals": {
+    "describe": false,
+    "it": false,
+    "beforeEach": false,
+    "afterEach": false,
+    "before": false,
+    "after": false
+  }
 }

@@ -25,12 +25,12 @@ Node.prototype.openEdge = function() {
 };
 
 Node.prototype.search = function(predicate, options) {
+  predicate = predicate || ((n) => n);
   options = options || {};
   if (typeof options !== 'object')
     throw new Error('Bogus `options\' argument (must be object)');
   options.strategy = options.strategy || 'breadth';
   options.take = options.take || null;
-  
   return this[options.strategy === 'breadth' ? 'BFS' : 'DFS'](predicate, options.take);
 };
 
@@ -92,7 +92,7 @@ Node.prototype.DFS = function(predicate, take) {
   return results;
 };
 
-Node.prototype.addChild = function(child) {
+Node.prototype.insert = function(child) {
   var receivingNode = this.search((n) => (! n.isFull()), {take: 1})[0];
   var receivingEdge = receivingNode.openEdge();
 
@@ -103,21 +103,23 @@ Node.prototype.addChild = function(child) {
   child.parent = receivingNode;
 };
 
-var tree = new Node(0);
-tree.addChild(new Node(1));
-tree.addChild(new Node(2));
+// var tree = new Node(0);
+// tree.addChild(new Node(1));
+// tree.addChild(new Node(2));
 
-tree.addChild(new Node(3));
-tree.addChild(new Node(4));
+// tree.addChild(new Node(3));
+// tree.addChild(new Node(4));
 
-tree.addChild(new Node(5));
-tree.addChild(new Node(6));
+// tree.addChild(new Node(5));
+// tree.addChild(new Node(6));
 
-tree.addChild(new Node(7));
-tree.addChild(new Node(8));
-tree.addChild(new Node(9));
-tree.addChild(new Node(10));
+// tree.addChild(new Node(7));
+// tree.addChild(new Node(8));
+// tree.addChild(new Node(9));
+// tree.addChild(new Node(10));
 
-console.log('digraph {');
-console.log(tree.toString());
-console.log('}');
+// console.log('digraph {');
+// console.log(tree.toString());
+// console.log('}');
+
+module.exports = Node;
