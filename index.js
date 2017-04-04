@@ -1,7 +1,7 @@
 "use strict";
 
 var Node = function Node(value) {
-  this.value = value || null;
+  this.value = (typeof value !== 'undefined' ? value : null);
   this.parent = null;
   this.left = null;
   this.right = null;
@@ -14,39 +14,58 @@ Node.prototype.toString = function() {
        ? this.value + ' -> ' + this.right.value + '\n' + this.right.toString() : '');
 };
 
-Node.prototype.insert = function(child) {
-  var edge = (this.left === null
-              ? 'left'
-              : (this.right === null
-                 ? 'right'
-                 : false));
-
-  if (edge === false) {
-    return (this.left.insert(child) || this.right.insert(child));
-  } else {
-    child.parent = this;
-    this[edge] = child;
-    return true;
-  };
+Node.prototype.isFull = function() {
+  return (this.left !== null && this.right !== null);
 };
 
-Node.prototype.extract = function() {
-  // ...
+Node.prototype.openEdge = function() {
+  return (this.left
+          ? (this.right ? false : 'right')
+          : 'left');
 };
 
-Node.prototype.swapWith = function(node) {
+Node.prototype.BFS = function(predicate) {
+  if (predicate(this)) return this;
+  if (this.left && predicate(this.left)) return this.left;
+  if (this.right && predicate(this.right)) return this.right;
+  return (this.left ? this.left.BFS(predicate) :
+          (this.right ? this.right.BFS(predicate) : false));
 };
 
-var N = Node;
+Node.prototype.DFS = function(predicate) {
+  if (predicate(this)) return this;
+  if (this.left) return (this.left.DFS(predicate) || this.left);
+  if (this.right) return (this.right.DFS(predicate) || this.right);
+  return false;
+};
 
-var a = new N(2);
-var b = new N(3);
-var c = new N(4);
-var d = new N(5);
+Node.prototype.addChild = function(child) {
+  var receivingNode = this.BFS((n) => (! n.isFull()));
+  var receivingEdge = receivingNode.openEdge();
 
-[b, c, d].forEach((n) => a.insert(n));
-a.insert(new N(1));
+  if (!receivingEdge)
+    throw new Error('Pool\'s closed');
+  
+  receivingNode[receivingEdge] = child;
+  child.parent = receivingNode;
+};
 
-console.log('digraph {\n');
-console.log(a.toString());
-console.log('}\n');
+var tree = new Node(0);
+tree.addChild(new Node(1));
+tree.addChild(new Node(2));
+
+tree.addChild(new Node(3));
+tree.addChild(new Node(4));
+
+tree.addChild(new Node(5));
+tree.addChild(new Node(6));
+
+tree.addChild(new Node(7));
+tree.addChild(new Node(8));
+tree.addChild(new Node(9));
+tree.addChild(new Node(10));
+
+
+console.log('digraph {');
+console.log(tree.toString());
+console.log('}');
