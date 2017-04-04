@@ -15,7 +15,7 @@ Node.prototype.toString = function() {
 };
 
 Node.prototype.isFull = function() {
-  return (this.left !== null && this.right !== null);
+  return (this.left && this.right);
 };
 
 Node.prototype.openEdge = function() {
@@ -24,23 +24,76 @@ Node.prototype.openEdge = function() {
           : 'left');
 };
 
-Node.prototype.BFS = function(predicate) {
-  if (predicate(this)) return this;
-  if (this.left && predicate(this.left)) return this.left;
-  if (this.right && predicate(this.right)) return this.right;
-  return (this.left ? this.left.BFS(predicate) :
-          (this.right ? this.right.BFS(predicate) : false));
+Node.prototype.search = function(predicate, options) {
+  options = options || {};
+  if (typeof options !== 'object')
+    throw new Error('Bogus `options\' argument (must be object)');
+  options.strategy = options.strategy || 'breadth';
+  options.take = options.take || null;
+  
+  return this[options.strategy === 'breadth' ? 'BFS' : 'DFS'](predicate, options.take);
 };
 
-Node.prototype.DFS = function(predicate) {
-  if (predicate(this)) return this;
-  if (this.left) return (this.left.DFS(predicate) || this.left);
-  if (this.right) return (this.right.DFS(predicate) || this.right);
-  return false;
+Node.prototype.BFS = function(predicate, take) {
+  var results = [];
+  var seen = {};
+  var queue = [this];
+  var here;
+
+  while (queue.length) {
+    here = queue.shift();
+    if (seen[here.value]) continue;
+    seen[here.value] = true;
+    
+    if (predicate(here)) {
+      results.push(here);
+      if (results.length === take)
+        return results.slice(0, take);
+    };
+    
+    ['left', 'right']
+      .forEach(function(edge) {
+        var child = here[edge];
+        if (child) {
+          queue.push(child);
+        };
+      });
+  };
+  
+  return results;
+};
+
+Node.prototype.DFS = function(predicate, take) {
+  var results = [];
+  var seen = {};
+  var queue = [this];
+  var here;
+
+  while (queue.length) {
+    here = queue.pop();
+    if (seen[here.value]) continue;
+    seen[here.value] = true;
+    
+    if (predicate(here)) {
+      results.push(here);
+      if (results.length === take)
+        return results.slice(0, take);
+    };
+    
+    ['right', 'left']
+      .forEach(function(edge) {
+        var child = here[edge];
+        if (child) {
+          queue.push(child);
+        };
+      });
+  };
+  
+  return results;
 };
 
 Node.prototype.addChild = function(child) {
-  var receivingNode = this.BFS((n) => (! n.isFull()));
+  var receivingNode = this.search((n) => (! n.isFull()), {take: 1})[0];
   var receivingEdge = receivingNode.openEdge();
 
   if (!receivingEdge)
@@ -64,7 +117,6 @@ tree.addChild(new Node(7));
 tree.addChild(new Node(8));
 tree.addChild(new Node(9));
 tree.addChild(new Node(10));
-
 
 console.log('digraph {');
 console.log(tree.toString());
