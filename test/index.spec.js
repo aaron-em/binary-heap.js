@@ -3,7 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var Node = require('../index.js');
+var Node = require('lib/node.js');
 
 describe('node insertion', function() {
   var tree;
