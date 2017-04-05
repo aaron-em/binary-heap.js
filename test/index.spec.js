@@ -29,7 +29,7 @@ describe('node insertion', function() {
          5: [],
          6: []
        };
-       var nodes = [tree, 1, 2, 3, 4, 5, 6]
+       var nodes = [tree, 1, 3, 3, 5, 5, 6]
              .map((n) => (n instanceof Node ? n : new Node(n)));
        nodes.slice(1)
          .forEach((n) => tree.insert(n));
@@ -79,6 +79,25 @@ describe('search', function() {
              .map((n) => n.value);
        expect(results)
          .to.deep.equal([0, 1]);
+     }]
+  ].forEach((test) => it.apply(null, test));
+});
+
+describe('swap', function() {
+  var tree;
+
+  beforeEach(function() {
+    tree = new Node(0);
+    [1, 2, 3, 4, 5, 6]
+      .forEach((n) => tree.insert(new Node(n)));
+  });
+
+  [
+    ['should swap correctly',
+     function() {
+       tree.swapWith(tree.left);
+       expect(tree.search().map((n) => n.value))
+         .to.deep.equal([1, 0, 2, 3, 4, 5, 6]);
      }]
   ].forEach((test) => it.apply(null, test));
 });
