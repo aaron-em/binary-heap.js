@@ -46,6 +46,16 @@ describe('node insertion', function() {
            expect(expectedKids)
              .to.deep.equal(actualKids);
          });
+     }],
+
+    ["should heap-up on insertion",
+     function() {
+       [4, 5, 6, 1].forEach(function(n) {
+         tree.insert(new Node(n));
+       });
+
+       expect(tree.search().map((n) => n.value).slice(0, 2))
+         .to.deep.equal([0, 1]);
      }]
   ].forEach((test) => it.apply(null, test));
 });
