@@ -2,7 +2,12 @@
 
 var Node = require('lib/node');
 
-var nodes = [0, 1, 3, 3, 5, 5, 7, 7, 9, 9]
+var values = [0];
+for (var i = 1; i < 10; i++) {
+  values.push(Math.floor(Math.random() * 100) + i);
+};
+
+var nodes = values
       .sort((m, n) => (Math.random() < 0.5))
       .map((i) => new Node(i));
 
@@ -20,7 +25,12 @@ while ((res = tree.search((n) => (n.parent && n.parent.value > n.value),
 };
 
 var removee = tree.search((n) => n.childCount() === 1, {take: 1})[0];
-removee.detach();
+// removee.detach();
+
+// tree.search(function(node) {
+//   var successor = tree
+//         .search((n) => node.value === n.value);
+// });
 
 console.log('digraph {');
 nodes
@@ -28,5 +38,5 @@ nodes
     console.log('"' + node.identity + '" [label="' + node.value + '"]');
   });
 console.log(tree.toString());
-console.log(removee.toString());
+// console.log(removee.toString());
 console.log('}');
