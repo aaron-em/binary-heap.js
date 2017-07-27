@@ -15,22 +15,21 @@ var tree = nodes[0];
 nodes.slice(1)
   .forEach((n) => tree.insert(n));
 
-var res;
-var node;
-while ((res = tree.search((n) => (n.parent && n.parent.value > n.value),
-                          {take: 1}))) {
-  if (res.length === 0) break;
-  node = res[0];
-  node.swapWith(node.parent);
-};
+// var res;
+// var node;
+// while ((res = tree.search((n) => (n.parent && n.parent.value > n.value),
+//                           {take: 1}))) {
+//   if (res.length === 0) break;
+//   node = res[0];
+//   node.swapWith(node.parent);
+// };
 
-var removee = tree.search((n) => n.childCount() === 1, {take: 1})[0];
+var n = new Node(0);
+tree.insert(n);
+nodes.push(n);
+
+// var removee = tree.search((n) => n.childCount() === 1, {take: 1})[0];
 // removee.detach();
-
-// tree.search(function(node) {
-//   var successor = tree
-//         .search((n) => node.value === n.value);
-// });
 
 console.log('digraph {');
 nodes
